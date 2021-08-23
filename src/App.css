@@ -1,0 +1,16 @@
+.todos > *:nth-of-type(2n) .todo {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.todos > *:nth-of-type(2n) .todo.checked {
+  background-color: rgba(44, 187, 0, 0.171);
+}
+
+.todos > *:nth-of-type(2n + 1) .todo.checked {
+  background-color: rgba(60, 255, 0, 0.13);
+}
+
+.time-pass {
+  color: rgb(105, 105, 105);
+  font-size: 0.75rem;
+}

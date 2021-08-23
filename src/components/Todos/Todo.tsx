@@ -1,15 +1,20 @@
+import moment from 'moment';
 import { ReactElement, useCallback, useState } from 'react';
-import { Form } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
+import { Check, Pen, X } from 'react-bootstrap-icons';
 
 export type TTodo = {
   id: number;
   text: string;
   deleted: boolean;
   checked: boolean;
+  createdAt: string;
 };
 
 type TodoProps = TTodo & {
-  fnChangeTodo: (text: string) => void;
+  fnChangeTodoText: (text: string) => void;
+  fnChangeTodoChecked: () => void;
+  fnChangeTodoDeleted: () => void;
 };
 
 export default function Todo(props: TodoProps): ReactElement {
@@ -19,16 +24,23 @@ export default function Todo(props: TodoProps): ReactElement {
   const fnEditSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      props.fnChangeTodo(newTodoText);
+      props.fnChangeTodoText(newTodoText);
       setEditing(false);
     },
     [props, newTodoText],
   );
 
   return (
-    <div className="todo">
+    <div className={'todo ' + (props.checked && 'checked')}>
       <div className="d-flex p-2 border-top">
-        <div className="flex-grow-1">
+        <Button
+          variant={(props.checked ? '' : 'outline-') + 'success'}
+          className="p-0 px-1"
+          onClick={props.fnChangeTodoChecked}
+        >
+          <Check></Check>
+        </Button>
+        <div className="flex-grow-1 mx-2">
           {editing ? (
             <Form className="border-0 d-flex" onSubmit={fnEditSubmit}>
               <Form.Control
@@ -38,20 +50,37 @@ export default function Todo(props: TodoProps): ReactElement {
                 autoFocus={true}
                 value={newTodoText}
                 onChange={(e) => setNewTodoText(e.target.value)}
+                onBlur={fnEditSubmit}
               />
             </Form>
           ) : (
-            <span>{props.text}</span>
+            <span
+              className={props.deleted ? 'text-decoration-line-through' : ''}
+            >
+              {props.text}{' '}
+              <span className="time-pass">
+                {moment(props.createdAt).fromNow()}
+              </span>
+            </span>
           )}
         </div>
-        <div
+        <Button
           onClick={() => {
             setNewTodoText(props.text);
             setEditing(true);
           }}
+          variant={editing ? 'primary' : 'outline-primary'}
+          className="rounded-0 p-0 px-2"
         >
-          test
-        </div>
+          <Pen></Pen>
+        </Button>
+        <Button
+          onClick={props.fnChangeTodoDeleted}
+          variant={props.deleted ? 'danger' : 'outline-danger'}
+          className="rounded-0 p-0 px-1"
+        >
+          <X></X>
+        </Button>
       </div>
     </div>
   );
